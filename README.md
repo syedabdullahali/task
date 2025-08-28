@@ -43,31 +43,38 @@ This project demonstrates authentication, product management, cart, orders, and 
 ---
 
 ## 📂 Project Structure
-
-```minimal-ecommerce/
-│── backend/ # Django + DRF backend
-│ ├── ecommerce/ # Core Django project
-│ ├── products/ # Product app
-│ ├── orders/ # Orders app
-│ ├── users/ # Authentication
-│ ├── cart/ # Cart management
-│ └── ...
+### server
+```server/
+│── manage.py
+│── requirements.txt
+│── .env
 │
-│── frontend/ # React frontend
-│ ├── src/
-│ │ ├── components/
-│ │ ├── pages/
-│ │ └── store/
+├── config/                     # Global project settings
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   ├── asgi.py
 │
-│── docker-compose.yml
-│── Dockerfile
-│── .env.example
-│── README.md
+├── apps/                       # All business logic apps
+│   ├── users/
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   ├── urls.py
+│   │   ├── services/
+│   ├── products/
+│   ├── cart/
+│   └── orders/
+│
+├── core/                       # Shared utils/helpers
+│   ├── utils.py
+│   ├── exceptions.py
+│
+├── media/                      # Uploaded product images
+├── static/                     # Static assets
+└── logs/                       # Log files
 ```
-yaml
-Copy code
 
----
 
 ## ⚙️ Setup Instructions
 
