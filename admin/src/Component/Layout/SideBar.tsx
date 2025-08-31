@@ -50,12 +50,26 @@ const DocumentReportIcon = () => (
   </svg>
 );
 
+const CategoryIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5a.75.75 0 00.75-.75V6a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v.75c0 .414.336.75.75.75z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5a.75.75 0 00.75-.75v-.75a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v.75c0 .414.336.75.75.75z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 17.25h16.5a.75.75 0 00.75-.75v-.75a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v.75c0 .414.336.75.75.75z" />
+  </svg>
+);
+
+const ProductIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 006.18-15.65M12 3a9 9 0 00-6.18 15.65m6.18-15.65l-2.25 2.25m2.25-2.25l2.25 2.25m-2.25-2.25V9a.75.75 0 00.75.75h3a.75.75 0 00.75-.75V3m-4.5 9.75h.01M12 18.75h.01" />
+  </svg>
+);
 
 const navItems = [
   { name: 'Dashboard', icon: HomeIcon, path: '/admin' },
-  { name: 'User Admin', icon: UserGroupIcon, path: '#' },
-  { name: 'Product Management', icon: TruckIcon, path: '/admin/product_management' },
-  { name: 'Order Tracking', icon: TruckIcon, path: '#' },
+  { name: 'Admin', icon: UserGroupIcon, path: '/admin/admin_login' },
+  { name: 'Category', icon: CategoryIcon, path: '/admin/category' },
+  { name: 'Product', icon: ProductIcon, path: '/admin/product_management' },
+  { name: 'Order Tracking', icon: TruckIcon, path: '/admin/order_management' },
   { name: 'Analytics', icon: ChartBarIcon, path: '#' },
   { name: 'Settings', icon: CogIcon, path: '#' },
   { name: 'Reports', icon: DocumentReportIcon, path: '#' },
@@ -63,7 +77,7 @@ const navItems = [
 
 const App = () => {
   return (
-    <aside className="bg-white p-4 md:p-8 flex-shrink-0 border-r border-gray-200 min-h-screen">
+    <aside className="bg-white p-4  flex-shrink-0 border-r border-gray-200 min-h-screen">
       <nav className="space-y-2">
         {navItems.map((item, index) => (
           <NavLink key={index} to={item.path} className="flex items-center gap-2 p-3 rounded-xl hover:bg-gray-100 transition-colors duration-150">

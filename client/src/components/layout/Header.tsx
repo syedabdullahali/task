@@ -1,14 +1,15 @@
+import { Link } from "react-router-dom";
 import { ChevronDown, Heart, Search, ShoppingCart } from "../../icon/icon";
 
 const Header = () => (
   <header className="bg-white shadow-sm font-inter px-24 sticky top-0 h-[4.1rem] z-10">
     <div className="container mx-auto px-4 py-3 flex items-center justify-between">
       <div className="flex items-center space-x-6">
-        <div className="text-2xl font-bold text-blue-600">bocolo</div>
+        <div className="text-2xl font-bold text-blue-600">Fresh<span className="font-normal">Cart</span></div>
         <div className="hidden md:flex items-center space-x-6 text-sm text-gray-600">
           <a href="#" className="hover:text-blue-600">About Us</a>
           <a href="#" className="hover:text-blue-600">Market</a>
-          <a href="#" className="hover:text-blue-600">Order Tracking</a>
+          <Link to="/order_tracking" className="hover:text-blue-600">Order Tracking</Link>
           <a href="#" className="hover:text-blue-600">Contact Us</a>
         </div>
       </div>

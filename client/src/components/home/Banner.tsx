@@ -2,7 +2,7 @@ import React from 'react'
 
 const HeroBanner = () => {
   return (
-     <section className="relative w-full   mb-8 grid grid-cols-2 gap-2">
+     <section className="relative w-full h-64   mb-8 grid grid-cols-2 gap-2">
             <div className='relative rounded-md overflow-hidden shadow-lg  '>
                  <img  src="https://t3.ftcdn.net/jpg/02/84/47/42/360_F_284474219_au82CrQt5yNF8P6Uyoa7FSkiX8bzbG11.jpg" alt="Grocery offer" className="w-full h-80 object-cover" />
             <div className="absolute inset-0 bg-black/40 flex items-center p-8">
@@ -36,7 +36,7 @@ const HeroBanner = () => {
 }
 
 const SubHeroBanner = ()=>{
-    return     <section className="relative w-full rounded-2xl overflow-hidden shadow-lg mb-8">
+    return     <section className="relative w-full rounded-2xl overflow-hidden shadow-lg mb-8 ">
             <img  src="https://grocery.opentestdrive.com/media/http-_kartrocket-mtp.s3.amazonaws.com_all-stores_image_grocery_data_banners_grocery.jpg" alt="Grocery offer" className="w-full h-80 object-cover" />
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/60 to-transparent flex items-center p-8">
               <div className="text-white max-w-md">

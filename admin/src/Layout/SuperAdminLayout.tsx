@@ -8,7 +8,7 @@ const SuperAdminLayout = () => {
         <Header/>
         <div className='h-full  flex'>
             <SideBar/>
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-50 lg:p-6">
+            <div className="flex-1 overflow-y-auto p-4 bg-gray-100 lg:p-6">
              <Outlet/>
             </div>
         </div>

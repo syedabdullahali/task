@@ -26,7 +26,7 @@ const ProductManagement = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-4 sm:p-8 font-sans antialiased text-gray-800">
+    <div className="min-h-screen  font-sans antialiased text-gray-800">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-gray-200">

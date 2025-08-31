@@ -1,0 +1,98 @@
+[
+  {
+    "model": "products.product",
+    "fields": {
+      "title": "Carrot",
+      "discount": "1.50",
+      "description": "Fresh carrots are crisp, vibrant, and naturally sweet with a bright orange hue. Their crunchy texture and earthy flavor make them perfect for eating raw or cooked. Packed with vitamins and antioxidants, carrots promote good vision and health. A versatile vegetable, they add color, nutrition, and freshness to every dish.",
+      "price": "30.00",
+      "stock": 80,
+      "image": "https://cdn11.bigcommerce.com/s-kc25pb94dz/images/stencil/1280x1280/products/197/954/Carrot__41894.1646667854.jpg?c=2",
+      "category": 1,
+      "type": "Vegetable",
+      "mtg": "2025-08-31T12:00:00Z",
+      "created_at": "2025-08-31T12:00:00Z",
+      "updated_at": "2025-08-31T12:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "fields": {
+      "title": "Spinach",
+      "discount": "1.00",
+      "description": "Fresh spinach is tender, leafy, and vibrant green, offering a mild earthy taste with a hint of sweetness. Rich in iron, vitamins, and fiber, it supports strength and vitality. Whether eaten raw in salads, lightly sautéed, or blended into smoothies, spinach adds nutrition, freshness, and color to countless healthy dishes.",
+      "price": "15.00",
+      "stock": 50,
+      "image": "https://walnutcreekfarmtexas.com/wp-content/uploads/2021/08/spin.jpg",
+      "category": 1,
+      "type": "Vegetable",
+      "mtg": "2025-08-31T12:05:00Z",
+      "created_at": "2025-08-31T12:05:00Z",
+      "updated_at": "2025-08-31T12:05:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "fields": {
+      "title": "Milk",
+      "discount": "0.50",
+      "description": "Fresh whole milk, rich and creamy with essential calcium and protein. Perfect for drinking, cooking, and baking, it supports strong bones and overall health.",
+      "price": "25.00",
+      "stock": 100,
+      "image": "https://png.pngtree.com/png-clipart/20240619/original/pngtree-a-bottle-in-fresh-splash-milk-png-image_15366664.png",
+      "category": 2,
+      "type": "Dairy",
+      "mtg": "2025-08-31T12:10:00Z",
+      "created_at": "2025-08-31T12:10:00Z",
+      "updated_at": "2025-08-31T12:10:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "fields": {
+      "title": "Cheddar Cheese",
+      "discount": "2.00",
+      "description": "Aged cheddar cheese with a sharp, tangy flavor and firm texture. Perfect for sandwiches, burgers, or grating over dishes.",
+      "price": "45.00",
+      "stock": 40,
+      "image": "https://static.vecteezy.com/system/resources/previews/047/601/341/non_2x/sliced-cheddar-cheese-pieces-cut-out-stock-png.png",
+      "category": 2,
+      "type": "Dairy",
+      "mtg": "2025-08-31T12:15:00Z",
+      "created_at": "2025-08-31T12:15:00Z",
+      "updated_at": "2025-08-31T12:15:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "fields": {
+      "title": "Bread Loaf",
+      "discount": "1.00",
+      "description": "Freshly baked bread loaf with a golden crust and soft, fluffy inside. Great for sandwiches, toasts, or serving with soups.",
+      "price": "20.00",
+      "stock": 70,
+      "image": "https://static.vecteezy.com/system/resources/previews/044/013/366/non_2x/bread-slice-on-white-transparent-background-format-png.png",
+      "category": 3,
+      "type": "Bakery",
+      "mtg": "2025-08-31T12:20:00Z",
+      "created_at": "2025-08-31T12:20:00Z",
+      "updated_at": "2025-08-31T12:20:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "fields": {
+      "title": "Croissant",
+      "discount": "0.75",
+      "description": "Flaky, buttery croissant baked fresh daily. Perfect as a snack, breakfast pastry, or paired with coffee.",
+      "price": "15.00",
+      "stock": 60,
+      "image": "https://static.vecteezy.com/system/resources/previews/017/340/369/non_2x/fresh-cooked-yellow-croissant-png.png",
+      "category": 3,
+      "type": "Bakery",
+      "mtg": "2025-08-31T12:25:00Z",
+      "created_at": "2025-08-31T12:25:00Z",
+      "updated_at": "2025-08-31T12:25:00Z"
+    }
+  }
+]

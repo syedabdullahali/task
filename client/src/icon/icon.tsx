@@ -69,5 +69,11 @@ const List = (props: Icon) => (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size||"24"} height={props.size||"24"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><line x1="8" x2="21" y1="6" y2="6" /><line x1="8" x2="21" y1="12" y2="12" /><line x1="8" x2="21" y1="18" y2="18" /><line x1="3" x2="3.01" y1="6" y2="6" /><line x1="3" x2="3.01" y1="12" y2="12" /><line x1="3" x2="3.01" y1="18" y2="18" /></svg>
 );
 
+const CheckIcon = (props: Icon) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size||"24"} height={props.size||"24"} viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-green-500">
+    <path fillRule="evenodd" d="M19.916 3.657a.75.75 0 01.107 1.05l-6.845 9.878a.75.75 0 01-1.049.107l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 6.292-9.103a.75.75 0 011.05-.107z" clipRule="evenodd" />
+  </svg>
+);
 
-export { Award, Gift, Truck, ShoppingBag, ShoppingCart, Heart, Search, ChevronRight, ChevronLeft, Star, ChevronDown, List }
+
+export { Award, Gift, Truck, ShoppingBag, ShoppingCart, Heart, Search, ChevronRight, ChevronLeft, Star, ChevronDown, List,CheckIcon}
