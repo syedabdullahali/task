@@ -1,76 +1,122 @@
 import React, { useState } from 'react';
 import { CheckIcon, ChevronRight, Star, Truck } from '../../../icon/icon';
 import ProductCard from '../../../components/product/ProductCard';
+import { useQuery } from '@tanstack/react-query';
+import { getData } from '../../../api/method';
+import { useParams } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton'
 
 type TabProps = {
-    title:string,
-    active:boolean,
-    onClick:()=>void
+  title: string,
+  active: boolean,
+  onClick: () => void
 }
 
-const Tab = ({ title, active, onClick }:TabProps) => (
+const Tab = ({ title, active, onClick }: TabProps) => (
   <button
     onClick={onClick}
-    className={`px-4 py-3 text-sm font-semibold transition-colors duration-200 ${
-      active ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'
-    }`}
+    className={`px-4 py-3 text-sm font-semibold transition-colors duration-200 ${ active ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'
+      }`}
   >
     {title}
   </button>
 );
 
 const ProductDetailPage = () => {
+  const { id } = useParams()
   const [activeTab, setActiveTab] = useState('DESCRIPTION');
 
-  // Mock data for the related products section
-const products = [
-    { image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOL35Snnu-L315KM5nMolf5z48A3qm4RS4oQ&shttps://fabsupermart.com/wp-content/uploads/2023/02/BM_Meatballs_Packshot-510x757-1.jpg', name: 'Al Natural Italian-Style Chicken', discount: '-30%', rating: 4, reviews: 12, price: '$7.25' },
-    { image: 'https://m.media-amazon.com/images/I/61mJ+pCAuUL._UF350,350_QL50_.jpg', name: "Angel's Rosamochapopop sweet & salty", discount: '-20%', rating: 5, reviews: 20, price: '$3.29' },
-    { image: 'https://plantx.com/cdn/shop/products/FieldRoast-CreamyOriginalChaoBlock_7oz_700x.jpg?v=1647003797', name: 'Felid Roast Choc Cheese Creamy', discount: '-15%', rating: 4, reviews: 15, price: '$9.50' },
-    { image: 'https://m.media-amazon.com/images/I/61oZ1kVdJBL.jpg', name: 'Blue Diamond Almonds Lightly Salted', discount: '-25%', rating: 5, reviews: 10, price: '$4.99' },
-    { image: 'https://m.media-amazon.com/images/I/61oZ1kVdJBL.jpg', name: 'Blue Diamond Almonds Lightly Salted', discount: '-25%', rating: 5, reviews: 10, price: '$4.99' }
+  const { data: { data }, isFetching, isSuccess,isLoading } = useQuery({
+    queryKey: ['productDetails', id],
+    queryFn: () => getData(`/products/details/${ id }/`),
+    initialData: { data: null } ,
+  })
 
-];
+  const isSkeletonLoading = isLoading || !Boolean(data)
+
+  type Product = {
+    image: string;
+    name: string;
+    discount: string;
+    rating: number;
+    reviews: number;
+    price: string;
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen font-sans antialiased px-24">
       <div className=" mx-auto">
-        {/* Product Info Section */}
         <div className="bg-white rounded-2xl  p-6 mb-8 lg:flex lg:space-x-8">
-          {/* Product Image */}
-          <div className="flex-shrink-0 mb-6 lg:mb-0 lg:w-1/2 flex items-center justify-center relative">
-            <span className="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              -5%
-            </span>
-            <span className="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              ORGANIC
-            </span>
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOL35Snnu-L315KM5nMolf5z48A3qm4RS4oQ&shttps://fabsupermart.com/wp-content/uploads/2023/02/BM_Meatballs_Packshot-510x757-1.jpg"
-              alt="Field Roast Chao Cheese"
-              className="rounded-lg max-h-96 w-96"
-            />
+          <div className="flex-shrink-0 mb-6 lg:mb-0  lg:w-1/2 flex items-center justify-center relative">
+
+            {isSkeletonLoading ? (
+              <>
+                <div className="absolute top-4 left-4 w-1/3">
+                  <Skeleton style={{ borderRadius: '0.5rem' }} height={40}  />
+                </div>
+                <div className="absolute top-4 right-4 w-1/3">
+                  <Skeleton style={{ borderRadius: '0.5rem' }} height={40}  />
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  -5%
+                </span>
+                <span className="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  ORGANIC
+                </span>
+              </>
+            )}
+
+            {isSkeletonLoading || !data.image?.url ? (
+              <Skeleton style={{ borderRadius: '0.5rem' }} height={400} width={450} />
+            ) : (
+              <img
+                src={data.image.url}
+                alt={data.name || "Product"}
+                className="rounded-lg max-h-96 w-96"
+              />
+            )}
+
           </div>
 
-          {/* Product Details */}
           <div className="lg:w-1/2">
+
+            {isSkeletonLoading?
+            <>
+             <Skeleton width={300} height={50}/>
+             <Skeleton width={300} height={40}/>
+            </>
+            :<>
             <h1 className="text-3xl font-bold text-gray-900">
               Field Roast Chao Cheese Creamy Original
             </h1>
+            
             <div className="flex items-center text-sm text-gray-500 mt-2 space-x-2">
-              <Star  className="w-4 h-4 text-yellow-400" />
+              <Star className="w-4 h-4 text-yellow-400" />
               <span>REVIEW</span>
               <span className="text-gray-400">•</span>
               <span>SKU: FGRMK</span>
               <span className="text-gray-400">•</span>
               <span>Storer</span>
             </div>
+            </>
+            }
 
+            {isSkeletonLoading?
+              <>
+               <Skeleton width={'100%'} height={40} count={2}/> 
+               <Skeleton width={'100%'} height={60} count={3}/> 
+               <Skeleton width={'100%'} height={20} count={9}/> 
+
+              </>
+            :<>
             <div className="flex items-center mt-4">
               <span className="text-sm font-semibold text-gray-500 line-through mr-2">$24.00</span>
               <span className="text-3xl font-bold text-blue-600">$19.50</span>
             </div>
-            
+
             <p className="text-sm text-gray-500 mt-2">
               Vivamus atiscing velit sit dolor dignissim. Tempus ligula luctus malesuada tincidunt. Class aptent taciti aptentbqui ad litora torquent
             </p>
@@ -93,7 +139,7 @@ const products = [
             <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 mt-2 rounded-full transition-colors duration-200">
               Buy now
             </button>
-            
+
             <div className="flex items-center space-x-4 mt-4 text-sm text-gray-500">
               <a href="#" className="flex items-center hover:text-blue-600 transition-colors duration-200">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-1">
@@ -123,8 +169,8 @@ const products = [
                 LIFE: 45 days
               </p>
             </div>
-            
-            <div className="mt-4 text-sm text-gray-500">
+
+               <div className="mt-4 text-sm text-gray-500">
               <span className="font-semibold text-gray-800">Category:</span> Grocery & Staples
             </div>
 
@@ -135,10 +181,17 @@ const products = [
                 </svg>
               </div>
             </div>
+            </>}   
+
+         
           </div>
 
-          {/* Side Info Section */}
           <div className="lg:w-1/4 mt-8 lg:mt-0 p-6 bg-gray-100 rounded-2xl">
+            {isSkeletonLoading?
+            <>
+             <Skeleton height={30} />
+             <Skeleton height={60} count={3}/>
+            </>:<>
             <div className="mb-4">
               <p className="text-gray-500 text-sm">Covid-19 info: We keep delivering.</p>
             </div>
@@ -167,13 +220,24 @@ const products = [
                 </div>
               </li>
             </ul>
+            </>
+            
+            }
+
           </div>
         </div>
 
-        {/* Product Description Tabs */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+
+          {isSkeletonLoading?
+          <>
+          <Skeleton width={150} height={50} count={2} containerClassName='flex gap-2 mb-2' />
+          <Skeleton width={'100%'} count={4} height={15} />
+          </>
+          :
+          <>
           <div className="flex border-b border-gray-200 space-x-4 mb-4">
-            {['DESCRIPTION', 'VENDER', 'REVIEWS (2)', 'QUESTIONS AND ANSWERS'].map(tab => (
+            {['DESCRIPTION', 'REVIEWS (2)'].map(tab => (
               <Tab
                 key={tab}
                 title={tab}
@@ -182,33 +246,32 @@ const products = [
               />
             ))}
           </div>
+          
           <div className="mt-6 text-sm text-gray-600">
-            {/* Content for the active tab */}
             {activeTab === 'DESCRIPTION' && (
               <p>
-                Quisque varius diam vel metus mattis, id aliquam diam rhoncus. Proin vitae magna in dui finibus malesuada et at nulla. Morbi elit ex,
-                viverra vitae ante vel, blandit feugiat ligula. Fusce fermentum iaculis nibh, at sodales leo maximus a. Nullam ultricies sodales nunc,
-                in pellentesque lorem mattis quis. Cras imperdiet est in nunc tristique lacinia. Nullam aliquam elit eu accumsan tincidunt. Suspendisse
-                velit ex, aliquet vel ornare vel, dignissim a tortor.
+                {data.description}
               </p>
             )}
-            {activeTab === 'VENDER' && <p>Information about the vendor...</p>}
             {activeTab === 'REVIEWS (2)' && <p>Reviews for the product...</p>}
-            {activeTab === 'QUESTIONS AND ANSWERS' && <p>Questions and answers section...</p>}
           </div>
+          </>}
+
         </div>
 
-            <section className="mb-8">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Related Products</h2>
-                                <a href="#" className="flex items-center text-sm font-medium text-blue-600 hover:underline">
-                                    View All <ChevronRight size={"16"} className="ml-1" />
-                                </a>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 ">
-                                {products.map((p, i) => <ProductCard key={i} product={p} />)}
-                            </div>
-                        </section>
+        <section className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            {isSkeletonLoading?<Skeleton height={30} width={200}/>:<h2 className="text-xl sm:text-2xl font-bold text-gray-800">Related Products</h2>}
+
+            {isSkeletonLoading?<Skeleton width={100}/>:<a href="#" className="flex items-center text-sm font-medium text-blue-600 hover:underline">
+              View All <ChevronRight size={"16"} className="ml-1" />
+            </a>}
+            
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 ">
+            {(isSkeletonLoading?[{},{},{},{},{}]:data?.related_products)?.map((p: Product, i: number) => <ProductCard isLoading={isSkeletonLoading} key={i} product={p} />)}
+          </div>
+        </section>
       </div>
     </div>
   );

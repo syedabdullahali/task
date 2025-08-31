@@ -5,7 +5,7 @@ import ProductCard from '../../components/product/ProductCard';
 import Sidebar from '../../components/layout/Sidebar';
 import { SubHeroBanner, HeroBanner } from '../../components/home/Banner';
 import { useQuery } from '@tanstack/react-query';
-import { getProduct } from '../../api/method';
+import { getData } from '../../api/method';
 
 type Product = {
   image: string;
@@ -21,7 +21,7 @@ const Home = () => {
 
  const { isSuccess, data, isError, status, isLoading } = useQuery({
   queryKey: ["homeLayoutData"],
-  queryFn: () => getProduct("/products/group/"),
+  queryFn: () => getData("/products/group/"),
 });
  
       console.log(isSuccess,data,isError,status,isLoading)

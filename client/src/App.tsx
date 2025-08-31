@@ -13,8 +13,8 @@ function App() {
         <Routes>
           <Route path='/' element={<Layout/>} >
           <Route index element={<Home/>}/>
-          <Route path='/product-detail' element={<ProductDetailPage/>}/>
-          <Route path='/order_tracking' element={<Order/>}/>
+          <Route path='product-detail/:id' element={<ProductDetailPage/>}/>
+          <Route path='order_tracking' element={<Order/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

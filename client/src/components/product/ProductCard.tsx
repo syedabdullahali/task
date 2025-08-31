@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, Star } from "../../icon/icon";
+import Skeleton from "react-loading-skeleton";
 
 const StarRating = ({ rating }:{rating:Number}) => {
   const stars = Array(5).fill(null).map((_, i) => (
@@ -12,11 +13,24 @@ const StarRating = ({ rating }:{rating:Number}) => {
   return <div className="flex">{stars}</div>;
 };
 
-const ProductCard = ({ product }:{product:any}) => {
+const ProductCard = ({ product,isLoading=false }:{product:any,isLoading?:boolean}) => {
     const navigate = useNavigate()
 return  <div className="bg-white p-4  border-r border-y  border-gray-200 border-gray-200 transition-transform transform hover:scale-105">
-    <div className="relative">
-      <img src={product.image.url} alt={product.name} className="w-full h-40 object-cover rounded-lg mb-2" />
+      {isLoading?<>
+      <Skeleton height={140}/>
+      <Skeleton height={20}/>
+      <Skeleton height={20}/>
+      <Skeleton height={20}/>
+      <Skeleton height={50}/>
+
+      </>:
+      <>
+      <div className="relative">
+        
+        
+        <img src={product.image.url} alt={product.name} className="w-full h-40 object-cover rounded-lg mb-2" />
+      
+
       {((product.discount/100)*product.price)>0?<span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-${((product.discount/100)*product.price).toFixed(2)} Off</span>:""}
       <div className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-100">
         <Heart size={"16"} className="text-gray-500" />
@@ -39,10 +53,12 @@ return  <div className="bg-white p-4  border-r border-y  border-gray-200 border-
 
         }
       </p>
-      <button onClick={()=>{navigate("/product-detail")}} className="mt-3 w-full bg-blue-800 text-white text-sm py-2 rounded-full hover:bg-blue-700 transition-colors">
+      <button onClick={()=>{navigate("/product-detail/"+product.id)}} className="mt-3 w-full bg-blue-800 text-white text-sm py-2 rounded-full hover:bg-blue-700 transition-colors">
         <ShoppingCart size={"16"} className="inline-block mr-2" /> Add
       </button>
     </div>
+    </>
+    }
   </div>
 };
 

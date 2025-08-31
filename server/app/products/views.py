@@ -29,7 +29,10 @@ def product_details(_, product_id):
             "mtg": product.mtg.isoformat() if product.mtg else None,
             "show_on_layout": product.show_on_layout,
             "related_products": [
-                {"id": rp.id, "title": rp.title, "price": str(rp.price)}
+                {
+                    "id": rp.id, "title": rp.title, "price": str(rp.price),
+                    "discount":rp.discount,"stock":rp.stock,"image":rp.image
+                }
                 for rp in product.related_products.all()
             ],
         }

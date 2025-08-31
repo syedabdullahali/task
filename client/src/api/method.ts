@@ -1,7 +1,7 @@
 const base_url = 'http://127.0.0.1:8000'
 
 
-const getProduct = async (url: string) => {
+const getData = async (url: string) => {
     console.log(`${base_url}${url}`)
     const res = await fetch(`${base_url}${url}`, {
     method: "GET",
@@ -9,7 +9,6 @@ const getProduct = async (url: string) => {
       "Content-Type": "application/json",
       "Accept": "application/json",
     },
-    // credentials: "include", // only if using cookies/auth
   });
     if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
@@ -20,4 +19,4 @@ const getProduct = async (url: string) => {
     return res.json();
 };
 
-export { getProduct };
+export { getData };
