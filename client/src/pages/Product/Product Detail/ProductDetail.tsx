@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CheckIcon, ChevronRight, Star, Truck } from '../../../icon/icon';
 import ProductCard from '../../../components/product/ProductCard';
 import { useQuery } from '@tanstack/react-query';
@@ -43,6 +43,13 @@ const ProductDetailPage = () => {
     price: string;
   };
 
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // scroll to top
+  }, [id]);
+
+
+  console.log(data)
   return (
     <div className="bg-gray-50 min-h-screen font-sans antialiased px-24">
       <div className=" mx-auto">
@@ -61,10 +68,10 @@ const ProductDetailPage = () => {
             ) : (
               <>
                 <span className="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  -5%
+                  -{data.discount}% Off
                 </span>
                 <span className="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  ORGANIC
+                  {data.type}
                 </span>
               </>
             )}
@@ -90,7 +97,7 @@ const ProductDetailPage = () => {
             </>
             :<>
             <h1 className="text-3xl font-bold text-gray-900">
-              Field Roast Chao Cheese Creamy Original
+              {data.title}
             </h1>
             
             <div className="flex items-center text-sm text-gray-500 mt-2 space-x-2">
@@ -113,13 +120,12 @@ const ProductDetailPage = () => {
               </>
             :<>
             <div className="flex items-center mt-4">
-              <span className="text-sm font-semibold text-gray-500 line-through mr-2">$24.00</span>
-              <span className="text-3xl font-bold text-blue-600">$19.50</span>
+              {((data.discount/100)*data.price)>0?<span className="text-sm font-semibold text-gray-500 line-through mr-2">${data.price}</span>:""}
+              <span className="text-3xl font-bold text-blue-600">${ data.price -((data.discount/100)*data.price)}</span>
             </div>
 
             <p className="text-sm text-gray-500 mt-2">
-              Vivamus atiscing velit sit dolor dignissim. Tempus ligula luctus malesuada tincidunt. Class aptent taciti aptentbqui ad litora torquent
-            </p>
+                   Premium meat, rich dairy, vibrant vegetables, fresh bakery treats, and ripe fruits. Carefully selected for freshness, quality, and flavor, every product makes your meals wholesome, delicious, and satisfying every day.            </p>
 
             <div className="flex items-center mt-6 space-x-4">
               <div className="flex items-center border border-gray-300 rounded-full">
@@ -158,15 +164,17 @@ const ProductDetailPage = () => {
             <div className="mt-6 space-y-2 text-sm text-gray-600">
               <p className="flex items-center">
                 <CheckIcon />
-                Type: Organic
+                Type: {data.type}
               </p>
               <p className="flex items-center">
                 <CheckIcon />
-                MTG: Jun 4, 2021
+                MTG: {new Date(data.mtg).toDateString()}
               </p>
               <p className="flex items-center">
                 <CheckIcon />
-                LIFE: 45 days
+                LIFE: { Math.ceil(
+  (new Date(data.mtg).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+)} Days
               </p>
             </div>
 
