@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
-    // Mock user data for the header
     const userData = {
         name: 'Project Name #1',
         avatar: 'https://placehold.co/40x40/E5E7EB/4B5563?text=UN',
         online: true,
     };
-    const [isUserDropDownActive, setDropDownStatus] = useState(false)
+
+   const [isUserDropDownActive, setDropDownStatus] = useState(false)
    const navigate =  useNavigate()
 
     return (
@@ -16,7 +16,6 @@ const Header = () => {
             <div className="flex items-center gap-2 sm:gap-4">
                        <div className="text-2xl font-bold text-blue-800">Fresh<span className="font-normal">Cart</span></div>
 
-                {/* <span className="hidden md:inline text-gray-500 font-medium text-sm">Dashboard</span> */}
             </div>
             <div className="flex items-center gap-2 sm:gap-4 text-gray-500">
          

@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Sidebar from '../../components/layout/ClientLayout/Sidebar'
 import ProductFrameAll from '../../components/product/ProductFrameAll'
 import { useQuery } from '@tanstack/react-query'
-import { getData } from '../../api/method'
 import { useNavigate, useParams } from 'react-router-dom'
 import ProductSearch from '../../components/product/ProductSearch'
-// import { useParams } from 'react-router-dom'
-
+import {getPublicData} from "../../api/apiPublic" 
 const Shop = () => {
   const {categoryId} = useParams()
   const navigate = useNavigate()
@@ -14,14 +12,14 @@ const Shop = () => {
   const [value,setValue] = useState('')
   const {data:{data,categoryData},isLoading } = useQuery({
       queryKey: ['productDetails', categoryId,value],
-      queryFn: () => getData(`/products/product_list_with_category?categoryId=${categoryId}&search=${value}`),
+      queryFn: () => getPublicData(`/products/product_list_with_category?categoryId=${categoryId}&search=${value}`),
       initialData: {data:null} ,
   })  
 
   const isSkeletonLoading = isLoading || !Boolean(data)
 
  useEffect(() => {
-     window.scrollTo(0, 0); // scroll to top
+     window.scrollTo(0, 0); 
    }, [categoryId]);
  
 

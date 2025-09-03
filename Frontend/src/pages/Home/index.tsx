@@ -1,16 +1,16 @@
 import Sidebar from '../../components/layout/ClientLayout/Sidebar';
 import { SubHeroBanner, HeroBanner } from '../../components/home/Banner';
 import { useQuery } from '@tanstack/react-query';
-import { getData } from '../../api/method';
+import { getPublicData } from '../../api/apiPublic';
+
 import ProductFrame from '../../components/product/ProductFrame';
 
 
 const Home = () => {
 
- const { isSuccess, data, isError, status, isLoading } = useQuery({
+ const { data, isLoading } = useQuery({
   queryKey: ["homeLayoutData"],
-  queryFn: () => getData("/products/group/"),
-  initialData: null ,
+  queryFn: () => getPublicData("/products/group/"),
 });
   const isSkeletonLoading = isLoading || !Boolean(data)
 

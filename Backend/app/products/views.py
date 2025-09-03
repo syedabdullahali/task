@@ -21,7 +21,6 @@ def product_details(_, product_id):
             "discount": str(product.discount),
             "description": product.description,
             "price": str(product.price),
-            "stock": product.stock,
             "created_at": product.created_at.isoformat(),
             "updated_at": product.updated_at.isoformat(),
             "image": product.image,
@@ -32,7 +31,7 @@ def product_details(_, product_id):
             "related_products": [
                 {
                     "id": rp.id, "title": rp.title, "price": str(rp.price),
-                    "discount":rp.discount,"stock":rp.stock,"image":rp.image
+                    "discount":rp.discount,"image":rp.image
                 }
                 for rp in product.related_products.all()
             ],
@@ -135,7 +134,7 @@ def product_list_with_category(request):
 
         start = (page - 1) * page_limit
         end = start + page_limit
-        products_data = products_data[start:end].values('id', 'title', 'price', 'discount', 'stock', 'image')
+        products_data = products_data[start:end].values('id', 'title', 'price', 'discount', 'image')
 
         # Categories for frontend
         categoryData = Category.objects.values('id', 'title')
@@ -167,7 +166,6 @@ def product_grouped(request):
             Category.objects
             .annotate(
                 total_products=Count("product"),
-                total_stock=Sum("product__stock"),
                 total_price=Sum("product__price"),
             )
             .order_by("-total_products") 
@@ -177,7 +175,7 @@ def product_grouped(request):
 
                     queryset=Product.objects
                     .filter(show_on_layout=True)
-                    .only("id", "title", "price", "discount", "stock", "image")
+                    .only("id", "title", "price", "discount", "image")
                     .order_by("id"),
 
                     to_attr="prefetched_products"
@@ -198,7 +196,6 @@ def product_grouped(request):
               "title": p.title,
               "price": p.price,
               "discount": p.discount,
-              "stock": p.stock,
               "image": p.image 
         }
         for p in category.prefetched_products
@@ -213,7 +210,6 @@ def product_grouped(request):
            "category_id": category.id,
            "category_title": category.title,
            "total_products": getattr(category, "total_products", 0),
-           "total_stock": getattr(category, "total_stock", 0),
            "total_price": getattr(category, "total_price", 0),
            "products": products
          }

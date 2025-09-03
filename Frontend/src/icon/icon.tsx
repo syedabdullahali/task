@@ -88,6 +88,62 @@ const EditIcon = (props: Icon) => (
     </svg>
 );
 
+const UserGroupIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.75c-.328.115-.668.225-1.008.337A12.355 12.355 0 0112 21.75c-2.83 0-5.45-1.015-7.462-2.673a3.444 3.444 0 01-1.462-2.733v-2.31c0-.77.347-1.493.957-1.983L12 9.75m-4.5 7.5h.008v.008h-.008v-.008zm-2.25-6.69a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75l-2.25-2.25m4.5 0l-2.25 2.25M12 9.75h6.75a.75.75 0 01.75.75v3a.75.75 0 01-.75.75H12" />
+  </svg>
+);
+
+const TruckIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75c0 .414.336.75.75.75h2.25a.75.75 0 00.75-.75v-2.25a.75.75 0 00-.75-.75H9a.75.75 0 00-.75.75v2.25z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75c0 .414.336.75.75.75h2.25a.75.75 0 00.75-.75v-2.25a.75.75 0 00-.75-.75H17.25a.75.75 0 00-.75.75v2.25z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 13.5a1.5 1.5 0 01-1.5-1.5V6a1.5 1.5 0 011.5-1.5h12A1.5 1.5 0 0121 6v6a1.5 1.5 0 01-1.5 1.5H18" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21h.01M12 21a.75.75 0 00.75-.75V15" />
+  </svg>
+);
+
+const CategoryIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5a.75.75 0 00.75-.75V6a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v.75c0 .414.336.75.75.75z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5a.75.75 0 00.75-.75v-.75a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v.75c0 .414.336.75.75.75z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 17.25h16.5a.75.75 0 00.75-.75v-.75a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75v.75c0 .414.336.75.75.75z" />
+  </svg>
+);
+
+const ProductIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 006.18-15.65M12 3a9 9 0 00-6.18 15.65m6.18-15.65l-2.25 2.25m2.25-2.25l2.25 2.25m-2.25-2.25V9a.75.75 0 00.75.75h3a.75.75 0 00.75-.75V3m-4.5 9.75h.01M12 18.75h.01" />
+  </svg>
+);
+
+const SearchIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.197 5.197a7.5 7.5 0 0010.606 10.606z" />
+    </svg>
+);
+
+const AddIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 -ml-1 mr-2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+);
 
 
-export {DeleteIcon,EditIcon, Award, Gift, Truck, ShoppingBag, ShoppingCart, Heart, Search, ChevronRight, ChevronLeft, Star, ChevronDown, List,CheckIcon}
+const CalendarIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5" />
+    </svg>
+);
+
+const HelpIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.144 1.006 1.144 2.475 0 3.481l-1.554 1.554a2.25 2.25 0 01-3.182 0l-1.554-1.554m-2.25 2.25h.008v.008h-.008zM12 18.75h.008v.008H12z" />
+  </svg>
+);
+
+export {DeleteIcon,EditIcon, Award, Gift, Truck, ShoppingBag, ShoppingCart, Heart, Search, ChevronRight, 
+    ChevronLeft, Star, ChevronDown, List,CheckIcon,CategoryIcon,ProductIcon,TruckIcon,UserGroupIcon,
+    SearchIcon,AddIcon,CalendarIcon,HelpIcon}

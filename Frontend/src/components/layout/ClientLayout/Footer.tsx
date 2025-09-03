@@ -2,7 +2,6 @@ import footerDiscount from "../../../assets/footerDiscount.png"
 import { Award, Gift, ShoppingBag, Truck } from "../../../icon/icon";
 
 const Footer = () => {
-  // Mock data for the footer links
   const footerLinks = [
     {
       title: "FRUIT & VEGETABLES",

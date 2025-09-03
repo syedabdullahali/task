@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Search } from '../../icon/icon'
 import { useNavigate } from 'react-router-dom'
+import { Product } from '../../types/product'
+import Spinner from '../ui/Spin'
 
 const ProductSearch = ({ dropdown = false, data, handaleChangeValue, value = "", isLoading = false }:
     { data?: [], dropdown?: boolean, handaleChangeValue: (value: string) => void, value: string, isLoading?: boolean }
@@ -18,27 +20,7 @@ const ProductSearch = ({ dropdown = false, data, handaleChangeValue, value = "",
         return () => document.removeEventListener('click', handleClickOutside);
     }, [])
 
-    const AnimatedSpin = () => {
-        return <svg
-            className="mr-3 h-5 w-5 animate-spin text-blue-500"
-            viewBox="0 0 24 24"
-        >
-            <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-                fill="none"
-            />
-            <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            />
-        </svg>
-    }
+
 
 
     return (
@@ -47,8 +29,8 @@ const ProductSearch = ({ dropdown = false, data, handaleChangeValue, value = "",
             <input value={value} onChange={(e) => { handaleChangeValue(e.target.value) }} type="text" placeholder="100% Bacon delivery without crossing the cow-line..."
                 className=" bg-transparent focus:outline-none text-gray-700 w-full" />
             <ul className={`bg-white flex flex-col  gap-4 top-full left-0 absolute z-20 rounded-b overflow-hidden   ${ dropdown && isFocus ? "w-full  " : "h-0 w-0 overflow-hidden " } duration-700`}>
-                {data?.map((el: any) =>
-                    <li onClick={()=>{
+                {data?.map((el: Product) =>
+                    <li key={el.id} onClick={()=>{
                         setIsFocus(false)
                         naviaget(`/product-detail/${el.id}`)
                         }} className='group hover:bg-gray-200 px-2 py-1 cursor-pointer flex justify-between itmes-center'>
@@ -75,7 +57,7 @@ const ProductSearch = ({ dropdown = false, data, handaleChangeValue, value = "",
                     </li>
                 }
             </ul>
-            {isLoading ? <AnimatedSpin /> : <span className='h-4 w-6 '></span>}
+            {isLoading ? <Spinner className='-ml-14' size={15} /> : <span className='h-4 w-6 '></span>}
         </div>
     )
 }

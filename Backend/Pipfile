@@ -8,13 +8,14 @@ asgiref = "==3.9.1"
 pyjwt = "==2.10.1"
 sqlparse = "==0.5.3"
 tzdata = "==2025.2"
-django = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 psycopg2-binary = "*"
 django-environ = "*"
 django-cors-headers = "*"
 pillow = "*"
+django = "*"
+dj-database-url = "*"
 
 [dev-packages]
 

@@ -1,18 +1,17 @@
 import { Link } from "react-router-dom";
-import { ChevronDown, Heart, Search, ShoppingCart } from "../../../icon/icon";
+import {Search, ShoppingCart } from "../../../icon/icon";
 import ProductSearch from "../../product/ProductSearch";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getData } from "../../../api/method";
+import { getPublicData } from "../../../api/apiPublic";
 
 const Header = () => {
    
    const [value,setValue] = useState('')
 
-  const { data: { data }, isFetching,isLoading } = useQuery({
+  const { data,isLoading } = useQuery({
     queryKey: ['productDetails', value],
-    queryFn: () => getData(`/products/list_Search_By_name/?search=${value}`),
-    initialData: { data: [] } ,
+    queryFn: () => getPublicData(`/products/list_Search_By_name/?search=${value}`),
   })
 
 
@@ -27,7 +26,7 @@ return<>
       </div>
 
     
-      <ProductSearch isLoading={isLoading||isFetching} value={value} handaleChangeValue={(value)=>{setValue(value)}} dropdown data={data}/>
+      <ProductSearch isLoading={isLoading} value={value} handaleChangeValue={(value)=>{setValue(value)}} dropdown data={data?.data||[]}/>
 
       <div className="flex items-center space-x-4 text-sm text-gray-600">
 
@@ -36,9 +35,7 @@ return<>
           <span className="hidden md:block">Need Help? Call Us: <span className="font-semibold text-blue-800">0828 888</span></span>
         </a>
        
-        <a href="#" className="hover:text-blue-800">
-          <Heart size={"20"} />
-        </a>
+     
     
          <Link to={'/cart'} className="hover:text-blue-800 cursor-pointer">
           <ShoppingCart size={"20"} />

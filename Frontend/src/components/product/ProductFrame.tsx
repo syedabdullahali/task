@@ -2,20 +2,13 @@ import Skeleton from "react-loading-skeleton";
 import ProductCard from "../../components/product/ProductCard";
 import { ChevronRight } from "../../icon/icon";
 import { Link } from "react-router-dom";
+import { ProductCardProps } from "../../types/product";
 
-type Product = {
-    image: string;
-    name: string;
-    discount: string;
-    rating: number;
-    reviews: number;
-    price: string;
-};
 
 
 const ProductFrame = ({ data, isLoading = false }: { data: any, isLoading: boolean }) => (
 
-    (isLoading ? [{}] : data)?.map((el: { products: Product[], category_title: string,category_id:number }) =>
+    (isLoading ? [{}] : data)?.map((el: { products: ProductCardProps[], category_title: string,category_id:number }) =>
         <section className="mb-8">
             <div className="flex items-center justify-between mb-4">
 
@@ -27,7 +20,7 @@ const ProductFrame = ({ data, isLoading = false }: { data: any, isLoading: boole
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-l border-gray-200">
                 {(isLoading ? new Array(5).fill({}) : el?.products)?.map((p, i) => (
-                    <ProductCard key={i} product={p as Product} isLoading={isLoading} />
+                    <ProductCard key={i} product={p} isLoading={isLoading} />
                 ))}
             </div>
         </section>))

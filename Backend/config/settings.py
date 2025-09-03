@@ -15,19 +15,46 @@ import dj_database_url
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+from datetime import timedelta
+import environ
+import stripe
+env = environ.Env()
+import environ
+import os
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(0cd!trr-*0@2w3ricznm=^^0%s63(fbs4o*&^okvt7d^y2+1-'
+SECRET_KEY = env("SECRET_KEY")
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
+
+import stripe
+stripe.api_key = STRIPE_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = "users.User"
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+]
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 # Application definition
 
@@ -38,12 +65,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders', 
+    'app.orders',
     'app.products', 
     'app.category',
     'app.cart',
-    'app.orders',
     'app.users',
+    'app.payment'
 ]
 
 MIDDLEWARE = [
@@ -137,9 +167,17 @@ DATABASES = {
 }
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "dc5022076754.ngrok-free.app"
 ]
 
 # If you need to allow all origins for development (not recommended for production)

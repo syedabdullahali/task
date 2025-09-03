@@ -5,14 +5,16 @@ import ProductDetailPage from './pages/Product/Product Detail/ProductDetail';
 import Order from './pages/Order';
 import Shop from './pages/Shop/Shop';
 import Login from './pages/Login/Login';
-import SignUp from './pages/SignUp/SignUp';
-import Cart from './pages/Cart/Crat';
+import SignUp from './pages/Login/SignUp';
+import Cart from './pages/Cart';
 import ClientLayout from './Layout/ClientLayout';
 import SuperAdminLayout from './Layout/SuperAdminLayout';
-import ProductManagement from './pages/ProductManagement';
-import CategoryManagement from './pages/CategoryManagement';
-import OrderManagement from './pages/OrderManagement';
-import UserManagement from './pages/UserManagement';
+import ProductManagement from './pages/management/ProductManagement';
+import CategoryManagement from './pages/management/CategoryManagement';
+import OrderManagement from './pages/management/OrderManagement';
+import UserManagement from './pages/management/UserManagement';
+import Payment from './pages/Payment';
+import OrderCompletePage from './pages/Order/OrderCompletePage';
 
 function App() {
   
@@ -29,6 +31,8 @@ function App() {
           <Route path='product-detail/:id' element={<ProductDetailPage/>}/>
           <Route path='order_tracking' element={<Order/>}/>
           <Route path='product-shop/:categoryId' element={<Shop/>}/>
+          <Route path="/order/:id/complete" element={<OrderCompletePage />} />
+           <Route path='/payment/:id' element={<Payment/>}/>
           </Route>
 
           <Route  path='/admin' element={<SuperAdminLayout/>} >

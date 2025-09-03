@@ -6,7 +6,6 @@ class Product(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Add default
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.JSONField(blank=True, null=True)

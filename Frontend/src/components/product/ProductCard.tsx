@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { Heart, ShoppingCart, Star } from "../../icon/icon";
+import {ShoppingCart, Star } from "../../icon/icon";
 import Skeleton from "react-loading-skeleton";
+import { ProductCardProps } from "../../types/product";
 
 const StarRating = ({ rating }:{rating:Number}) => {
   const stars = Array(5).fill(null).map((_, i) => (
@@ -13,8 +14,11 @@ const StarRating = ({ rating }:{rating:Number}) => {
   return <div className="flex">{stars}</div>;
 };
 
-const ProductCard = ({ product,isLoading=false }:{product:any,isLoading?:boolean}) => {
+const ProductCard = ({ product,isLoading=false }:ProductCardProps) => {
     const navigate = useNavigate()
+
+    
+
 return  <div className="bg-white p-4  border-r border-y  border-gray-200 border-gray-200 transition-transform transform hover:scale-105">
       {isLoading?<>
       <Skeleton height={140}/>
@@ -32,16 +36,12 @@ return  <div className="bg-white p-4  border-r border-y  border-gray-200 border-
       
 
       {((product.discount/100)*product.price)>0?<span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-${((product.discount/100)*product.price).toFixed(2)} Off</span>:""}
-      <div className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-100">
-        <Heart size={"16"} className="text-gray-500" />
-      </div>
+    
     </div>
     <div className="flex flex-col items-center text-center mt-2">
       <p className="text-gray-800 text-sm font-medium truncate w-full">{product.title}</p>
       <div className="flex items-center justify-center space-x-1 my-1">
-        <StarRating rating={product.rating} />
-        <span className="text-xs text-gray-500">({product.reviews})</span>
-        
+        <StarRating rating={product.rating} />        
       </div>
       <p className="text-red-500 font-semibold">
         {(product.discount/100)*product.price>0?
@@ -50,10 +50,10 @@ return  <div className="bg-white p-4  border-r border-y  border-gray-200 border-
          <span className="ml-2 text-red-500"> ${(product.price-(product.discount/100)*product.price) }</span>
          </>:
         <span className="ml-2 text-gray-600"> ${(product.price-(product.discount/100)*product.price) }</span>
-
         }
       </p>
-      <button onClick={()=>{navigate("/product-detail/"+product.id)}} className="mt-3 w-full bg-blue-800 text-white text-sm py-2 rounded-full hover:bg-blue-700 transition-colors">
+      <button onClick={()=>{
+        navigate("/product-detail/"+product.id)}} className="mt-3 w-full bg-blue-800 text-white text-sm py-2 rounded-full hover:bg-blue-700 transition-colors">
         <ShoppingCart size={"16"} className="inline-block mr-2" /> Add
       </button>
     </div>
