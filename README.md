@@ -193,7 +193,3 @@ REACT_APP_STRIPE_PUBLIC_KEY=<your-public-key>
 
 > This ensures realtime WebSockets work properly with the backend and frontend. for real time order update 
 
-
-
-
-Do you want me to make that diagram?
