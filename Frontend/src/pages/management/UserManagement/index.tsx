@@ -1,199 +1,257 @@
-import React, { useState } from 'react';
-import Table from '../../../components/ui/Table';
-import { AddIcon, CalendarIcon, DeleteIcon, EditIcon, SearchIcon } from '../../../icon/icon';
-
-const productsData = [
-    {
-        "username": "admin1@example.com",
-        "password": "Admin@123",
-        "role": "admin",
-        "status": "active",
-        "createdAt": "2025-08-30T12:00:00Z",
-        "id": "UHUHE28"
-    },
-    {
-        "username": "admin2@example.com",
-        "password": "Admin@234",
-        "role": "admin",
-        "status": "active",
-        "createdAt": "2025-08-30T12:05:00Z",
-        "id": "UHU8E28"
-    },
-    {
-        "username": "admin3@example.com",
-        "password": "Admin@345",
-        "role": "admin",
-        "status": "active",
-        "createdAt": "2025-08-30T12:10:00Z",
-        "id": "UH78E28"
-    },
-    {
-        "username": "admin4@example.com",
-        "password": "Admin@456",
-        "role": "admin",
-        "status": "active",
-        "createdAt": "2025-08-30T12:15:00Z",
-        "id": "EH893Y3"
-    },
-    {
-        "username": "admin5@example.com",
-        "password": "Admin@567",
-        "role": "admin",
-        "status": "active",
-        "createdAt": "2025-08-30T12:20:00Z",
-        "id": "EH893YNE8"
-    }];
-
-type Column<T> = {
-    key: keyof T;
-    title: string;
-    render?: (row: T) => React.ReactNode;
-    className?: string;
-};
-
-type User = {
-    username: string;
-    role: string;
-    status: string;
-    createdAt: string;
-    password: string;
-    id: string;
-};
-
-const columns: Column<User>[] = [
-    { title: "Name", key: "username" },
-    { title: "Role", key: "role" },
-    { title: "Status", key: "status" },
-    { title: "CreatedAt", key: "createdAt" },
-    { title: "Password", key: "password" },
-
-]
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { AddIcon, DeleteIcon, EditIcon, SearchIcon } from "../../../icon/icon";
+import Table from "../../../components/ui/Table";
+import { TableRowActions } from "../../../components/ui/TableAction";
+import Pagination from "../../../components/ui/Pagination";
+import { getPrivateData, postPrivateData, patchPrivateData, deletePrivateData } from "../../../api/apiPrivate";
+import toast from "react-hot-toast";
 
 const UserManagement = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isActionId, setActionId] = useState("")
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editUser, setEditUser] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+  const openModal = (user: any = null) => {
+    setEditUser(user);
+    setIsModalOpen(true);
+  };
 
-    const handaleAction = (row: User) => {
-        setActionId(prev => row.id === prev ? "" : row.id)
+  const closeModal = () => {
+    setEditUser(null);
+    setIsModalOpen(false);
+  };
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["users", currentPage, searchTerm, pageSize],
+    queryFn: () =>
+      getPrivateData(
+        `/user/?page=${currentPage}&page_size=${pageSize}&search=${searchTerm}`
+      ),
+  });
+
+  const users = data?.data || [];
+  const paginationData = data?.pagination || {};
+
+const saveUserMutation = useMutation({
+  mutationFn: async (payload: { id?: number; password: string; fullName: string; email: string; role: string }) => {
+    if (payload.id) return patchPrivateData(`/user/${payload.id}/`, payload);
+    return postPrivateData("/user/create/", payload);
+  },
+  onMutate: (payload) => {
+    toast.loading(`${payload.id ? "Updating" : "Creating"} user...`, { id: "save-user-toast" });
+  },
+  onSuccess: (_, payload) => {
+    toast.success(`User ${payload.id ? "updated" : "created"} successfully!`, { id: "save-user-toast" });
+    queryClient.invalidateQueries({ queryKey: ["users"] });
+    closeModal();
+  },
+  onError: (err: any) => {
+    toast.error(err?.message || "Failed to save user", { id: "save-user-toast" });
+  },
+});
+
+const deleteUserMutation = useMutation({
+  mutationFn: (id: number) => deletePrivateData(`/user/${id}/delete/`),
+  onMutate: (id) => {
+    toast.loading("Deleting user...", { id: `delete-user-${id}` });
+  },
+  onSuccess: (_, id) => {
+    toast.success("User deleted successfully!", { id: `delete-user-${id}` });
+    queryClient.invalidateQueries({ queryKey: ["users"] });
+  },
+  onError: (err: any, id) => {
+    toast.error(err?.message || "Failed to delete user", { id: `delete-user-${id}` });
+  },
+});
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+    const fullName = (form.elements.namedItem("fullName") as HTMLInputElement).value;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const role = (form.elements.namedItem("role") as HTMLSelectElement).value;
+
+    if (password && fullName && email && role) {
+      saveUserMutation.mutate({ id: editUser?.id, password, fullName, email, role });
     }
+  };
 
-    return (
-        <div className=" min-h-screen font-sans antialiased">
-            <div className="max-w-7xl mx-auto bg-white rounded-2xl  p-6 lg:p-10">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 lg:mb-10">
-                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">Admin Login List</h1>
-                    <button onClick={openModal} className="flex items-center bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-md">
-                        <AddIcon />
-                        Add Admin Login
-                    </button>
-                </div>
+  const columns = [
+    { key: "fullName", title: "Full Name" },
+    { key: "email", title: "Email" },
+    { key: "role", title: "Role" },
+  ];
 
-                <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
-                    <div className="relative w-full md:w-auto md:flex-1">
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-                        />
-                        <SearchIcon />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full md:w-auto md:flex-none">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Enter product name"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-                            />
-                        </div>
-                        <div className="relative">
-                            <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 appearance-none bg-white">
-                                <option value="">Select category</option>
-                                {['Device', 'Electronic', 'Cooking'].map((cat, i) => (
-                                    <option key={i} value={cat}>{cat}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Select date"
-                                className="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-                            />
-                            <CalendarIcon />
-                        </div>
-                    </div>
-                    <button className="hidden lg:block p-3 border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors duration-150 shadow-sm ml-auto">
-                        Clear
-                    </button>
-                </div>
-
-
-                <Table
-                    data={productsData}
-                    columns={columns}
-                    actions={(row) => <button onClick={() => { handaleAction(row) }} className="relative text-gray-700 m-auto block">
-                        •••
-                        <div
-                            className={`
-    absolute right-0 top-full z-10
-    w-56 rounded border bg-white shadow-lg
-    transition-all duration-300 ease-in-out
-    ${ row.id === isActionId ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none" }
-  `}
-                        >
-                            <ul className="flex flex-col p-2 space-y-2">
-                                <li >
-                                    <button className="w-full text-left px-4 py-2.5 hover:bg-gray-100 rounded flex justify-between">
-                                        Delete
-                                        <DeleteIcon size='20' className='text-red-600' />
-                                    </button>
-                                </li>
-                                <li>
-                                    <button className="w-full text-left px-4 py-2.5 hover:bg-gray-100 rounded flex justify-between">
-                                        Edit
-                                        <EditIcon size='20' className='text-blue-800' />
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </button>}
-
-                />
-
-
-
-                {isModalOpen && (
-                    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
-                        <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
-                            <h2 className="text-xl font-bold mb-4">Add Category</h2>
-                            <form>
-                                <div className="mb-4">
-                                    <label htmlFor="categoryName" className="block text-gray-700 text-sm font-bold mb-2">Category Name</label>
-                                    <input
-                                        type="text"
-                                        id="categoryName"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="Enter category name"
-                                    />
-                                </div>
-                                <div className="flex justify-end gap-2">
-                                    <button type="button" onClick={closeModal} className="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-xl hover:bg-gray-300 transition-colors duration-200">
-                                        Cancel
-                                    </button>
-                                    <button type="submit" className="px-4 py-2 bg-blue-800 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors duration-200">
-                                        Add
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
-            </div>
+  return (
+    <div className="min-h-screen font-sans antialiased">
+      <div className="max-w-7xl mx-auto bg-white rounded-2xl p-6 lg:p-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 lg:mb-10">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">
+            User Management
+          </h1>
+          <button
+            onClick={() => openModal()}
+            className="flex items-center bg-blue-800 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition-colors duration-200 shadow-md"
+          >
+            <AddIcon /> Add User
+          </button>
         </div>
-    );
+
+        <div className="flex flex-wrap gap-4 mb-6">
+          <div className="relative w-full md:w-1/2">
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+            />
+            <SearchIcon />
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="overflow-x-auto rounded-xl">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  {[...Array(columns.length)].map((_, i) => (
+                    <th key={i} className="px-6 py-3">
+                      <Skeleton height={16} />
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {[...Array(pageSize)].map((_, i) => (
+                  <tr key={i}>
+                    {[...Array(columns.length)].map((_, j) => (
+                      <td key={j} className="px-6 py-4">
+                        <Skeleton height={16} />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <Table
+            columns={columns}
+            data={users}
+            actions={(row: any) => (
+              <TableRowActions
+                actions={[
+                  { label: "Edit", onClick: () => openModal(row) },
+                  { label: "Delete", onClick: () => deleteUserMutation.mutate(row.id) },
+                ]}
+              />
+            )}
+          />
+        )}
+
+        <div className="mt-4 flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={paginationData.total_pages || 1}
+            onPageChange={setCurrentPage}
+            pageSize={pageSize}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+              <h2 className="text-xl font-bold mb-4">
+                {editUser ? "Edit User" : "Add User"}
+              </h2>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+                    password
+                  </label>
+                  <input
+                    type="text"
+                    id="password"
+                    name="password"
+                    defaultValue={editUser?.password || ""}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter password"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="fullName" className="block text-gray-700 text-sm font-bold mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    defaultValue={editUser?.fullName || ""}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter full name"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    defaultValue={editUser?.email || ""}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter email"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label htmlFor="role" className="block text-gray-700 text-sm font-bold mb-2">
+                    Role
+                  </label>
+                  <select
+                    id="role"
+                    name="role"
+                    defaultValue={editUser?.role || "user"}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-xl hover:bg-gray-300 transition-colors duration-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-800 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors duration-200"
+                  >
+                    {editUser ? "Update" : "Add"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default UserManagement;

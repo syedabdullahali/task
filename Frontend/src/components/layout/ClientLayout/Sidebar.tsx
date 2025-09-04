@@ -28,7 +28,7 @@ const Sidebar = ({ categoriesData, isLoading = false }: { categoriesData: Catego
             </NavLink>
 
             {categoriesData?.map((item: Categories, index: number) => (
-                <NavLink to={`/product-shop/${item.id}`} 
+                <NavLink key={item.id} to={`/product-shop/${item.id}`} 
             className={({isActive})=>`flex items-center justify-between p-2  
             ${ isActive?" text-white bg-blue-800":"hover:bg-gray-100 "} transition-colors cursor-pointer`}>
               <span className="flex items-center"> {item.title}T

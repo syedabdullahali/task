@@ -31,6 +31,15 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = env("SECRET_KEY")
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
+DJ_DATABASE_URL= env("DJ_DATABASE_URL")
+EMAIL_HOST_USER=env("EMAIL_HOST_USER") 
+
+EMAIL_BACKEND = env("EMAIL_BACKEND")
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS")        
+EMAIL_PORT =  env("EMAIL_PORT")              
+EMAIL_HOST_PASSWORD =  env("EMAIL_HOST_PASSWORD")      
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER         
 
 import stripe
 stripe.api_key = STRIPE_SECRET_KEY
@@ -56,7 +65,6 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -161,9 +169,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 DATABASES = {
-    'default': dj_database_url.parse(
-        "postgresql://ecommerce_mvp_user:WYkh6z8RjmnnxkFzZ28nYI5Jcksw95Of@dpg-d2pco0vdiees73br1vqg-a.oregon-postgres.render.com/ecommerce_mvp"
-    )
+    'default': dj_database_url.parse(DJ_DATABASE_URL)
 }
 
 
@@ -180,5 +186,15 @@ ALLOWED_HOSTS = [
     "dc5022076754.ngrok-free.app"
 ]
 
-# If you need to allow all origins for development (not recommended for production)
-# CORS_ALLOW_ALL_ORIGINS = True
+INSTALLED_APPS += ["channels"]
+
+ASGI_APPLICATION = "config.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}

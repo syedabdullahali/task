@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
-# class User(BaseUserManager):
 class User(AbstractUser):
     fullName = models.TextField(default='')
     email = models.EmailField(unique=True)

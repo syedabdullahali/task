@@ -15,10 +15,9 @@ export interface CartItem {
     product: ProductWithCat;
     quantity: number;
 }
-// Example: Cart
 export interface CartP {
     id: number;
     user: number;
     items: CartItem[];
-    created_at: string; // ISO date string
+    created_at: string;
 }

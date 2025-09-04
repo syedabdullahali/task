@@ -5,6 +5,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { getPrivateData } from '../../api/apiPrivate';
 import OrderList from '../../components/order/OrderList';
 import { OrderDta } from '../../types/order.s';
+import useOrderSocket from './useOrderStock';
 
 const Order = () => {
   const [activeTab, setActiveTab] = useState('pending');
@@ -13,6 +14,7 @@ const Order = () => {
     queryKey: ["orderData", activeTab],
     queryFn: () => getPrivateData(`/order/list/?status=${ activeTab }`),
   });
+
 
 
 
@@ -33,6 +35,10 @@ const Order = () => {
     { id: 'completed', label: 'Arrived' },
     { id: 'cancelled', label: 'Canceled' },
   ];
+
+  useOrderSocket((updatedOrder) => {
+    console.log(updatedOrder)
+});
 
 
   const SkeletonOrder = () => (

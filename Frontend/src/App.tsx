@@ -1,50 +1,76 @@
 import './App.css';
-import Home from './pages/Home';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ProductDetailPage from './pages/Product/Product Detail/ProductDetail';
-import Order from './pages/Order';
-import Shop from './pages/Shop/Shop';
-import Login from './pages/Login/Login';
-import SignUp from './pages/Login/SignUp';
-import Cart from './pages/Cart';
-import ClientLayout from './Layout/ClientLayout';
-import SuperAdminLayout from './Layout/SuperAdminLayout';
-import ProductManagement from './pages/management/ProductManagement';
-import CategoryManagement from './pages/management/CategoryManagement';
-import OrderManagement from './pages/management/OrderManagement';
-import UserManagement from './pages/management/UserManagement';
-import Payment from './pages/Payment';
-import OrderCompletePage from './pages/Order/OrderCompletePage';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Suspense, lazy } from "react";
+import { AuthProvider } from './context/AuthContext';
+import { PrivateRoute, AdminRoute } from './components/PrivateRoute';
+import Loader from './components/ui/Loader';
+import NotFound from './pages/errors/NotFound';
+
+// Layouts
+const ClientLayout = lazy(() => import('./Layout/ClientLayout'));
+const SuperAdminLayout = lazy(() => import('./Layout/SuperAdminLayout'));
+const Order = lazy(() => import('./pages/Order'));
+
+
+// Client Pages
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login/Login'));
+const SignUp = lazy(() => import('./pages/Login/SignUp'));
+const Cart = lazy(() => import('./pages/Cart'));
+const ProductDetailPage = lazy(() => import('./pages/Product/Product Detail/ProductDetail'));
+const Shop = lazy(() => import('./pages/Shop/Shop'));
+const Payment = lazy(() => import('./pages/Payment'));
+const OrderCompletePage = lazy(() => import('./pages/Order/OrderCompletePage'));
+
+// Admin Pages
+const ProductManagement = lazy(() => import('./pages/management/ProductManagement'));
+const ProductManagementForm = lazy(() => import('./pages/management/ProductManagement/ProductManagementForm'));
+const CategoryManagement = lazy(() => import('./pages/management/CategoryManagement'));
+const OrderManagement = lazy(() => import('./pages/management/OrderManagement'));
+const UserManagement = lazy(() => import('./pages/management/UserManagement'));
 
 function App() {
-  
   return (
-    <div className="App">
+    <AuthProvider>
       <BrowserRouter>
-        <Routes>
+        <Suspense fallback={<Loader/>}>
+          <Routes>
 
-          <Route path='/' element={<ClientLayout/>} >
-          <Route index element={<Home/>}/>
-          <Route path='login' element={<Login/>}/>
-          <Route path='SignUp' element={<SignUp/>}/>
-          <Route path='Cart' element={<Cart/>}/>
-          <Route path='product-detail/:id' element={<ProductDetailPage/>}/>
-          <Route path='order_tracking' element={<Order/>}/>
-          <Route path='product-shop/:categoryId' element={<Shop/>}/>
-          <Route path="/order/:id/complete" element={<OrderCompletePage />} />
-           <Route path='/payment/:id' element={<Payment/>}/>
-          </Route>
+            {/* Public Routes */}
+            <Route path='/' element={<ClientLayout />}>
+              <Route index element={<Home />} />
+              <Route path='login' element={<Login />} />
+              <Route path='signup' element={<SignUp />} />
+              <Route path='product-detail/:id' element={<ProductDetailPage />} />
+              <Route path='product-shop/:categoryId' element={<Shop />} />
+            </Route>
 
-          <Route  path='/admin' element={<SuperAdminLayout/>} >
-                <Route index element={<UserManagement/>}/>
-                <Route path='product_management'   element={<ProductManagement/>}/>
-                <Route path='category_management'  element={<CategoryManagement/>}/>
-                <Route path='order_management'  element={<OrderManagement/>}/>
-          </Route>  
+            {/* Protected User Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path='/' element={<ClientLayout />}>
+                <Route path='cart' element={<Cart />} />
+                <Route path='payment/:id' element={<Payment />} />
+                <Route path='order/:id/complete' element={<OrderCompletePage />} />
+                <Route path='order_tracking' element={<Order/>}/>
+              </Route>
+            </Route>
 
-        </Routes>
+            {/* Admin Routes */}
+            <Route element={<AdminRoute />}>
+              <Route path='/admin' element={<SuperAdminLayout />}>
+                <Route index element={<UserManagement />} />
+                <Route path='product_management' element={<ProductManagement />} />
+                <Route path='product_management_form' element={<ProductManagementForm />} />
+                <Route path='category_management' element={<CategoryManagement />} />
+                <Route path='order_management' element={<OrderManagement />} />
+              </Route>
+            </Route>
+
+                   <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
-    </div>
+    </AuthProvider>
   );
 }
 

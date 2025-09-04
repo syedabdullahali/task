@@ -8,6 +8,7 @@ import Skeleton from 'react-loading-skeleton';
 import { Product } from '../../../types/product';
 import { postPrivateData } from '../../../api/apiPrivate';
 import toast from 'react-hot-toast';
+import Spinner from '../../../components/ui/Spin';
 
 type TabProps = {
   title: string;
@@ -30,6 +31,7 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('DESCRIPTION');
   const [quantity, setQuantity] = useState(1);
+  const [isItemAdding,setIsItemAdding] = useState(false)
 
   const { data: { data } = { data: null }, isLoading } = useQuery({
     queryKey: ['productDetails', id],
@@ -54,13 +56,16 @@ const ProductDetailPage = () => {
 
   const cartAddItem = (id: number) => {
     const toastId = toast.loading('Adding To Cart...');
+    setIsItemAdding(true)
     addCartItem(id, {
       onSuccess: (res) => {
         toast.success(res.message, { id: toastId });
         navigate('/cart');
+      setIsItemAdding(false)
       },
       onError: (error: any) => {
         toast.error(error.message || 'Something went wrong...', { id: toastId });
+        setIsItemAdding(false)
       },
     });
   };
@@ -135,7 +140,7 @@ const ProductDetailPage = () => {
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-500 mt-2">{data.description}</p>
+                <p className="text-sm text-gray-500 mt-2">{data.description.slice(0,300)}...</p>
 
                 <div className="flex items-center mt-6 space-x-4">
                   <div className="flex items-center border border-gray-300 rounded-full">
@@ -144,11 +149,13 @@ const ProductDetailPage = () => {
                     <button onClick={() => handleQuantityChange(1)} className="px-3 py-1 text-gray-600">+</button>
                   </div>
                   <button
+                    disabled={isItemAdding}
                     onClick={() => cartAddItem(data.id)}
                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full transition-colors duration-200"
                   >
-                    Add to cart
+                    Add to cart 
                   </button>
+                  {isItemAdding?<Spinner/>:<></>}
                 </div>
 
                 <div className="mt-6 space-y-2 text-sm text-gray-600">
@@ -168,9 +175,6 @@ const ProductDetailPage = () => {
                   </p>
                 </div>
 
-                <div className="mt-4 text-sm text-gray-500">
-                  <span className="font-semibold text-gray-800">Category:</span> Grocery & Staples
-                </div>
               </>
             )}
           </div>

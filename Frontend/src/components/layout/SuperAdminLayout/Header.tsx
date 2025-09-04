@@ -2,14 +2,22 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+    
     const userData = {
-        name: 'Project Name #1',
         avatar: 'https://placehold.co/40x40/E5E7EB/4B5563?text=UN',
         online: true,
     };
 
    const [isUserDropDownActive, setDropDownStatus] = useState(false)
    const navigate =  useNavigate()
+   const userInfo =  JSON.parse(localStorage.getItem('userInfo')||"{}")
+
+   const handaleLogOut  =()=> {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("userInfo");
+    navigate("/login"); 
+   }
 
     return (
         <header className="z-50 flex items-center justify-between p-4 md:p-6 bg-white shadow-sm rounded-b-xl border-b border-gray-200 sticky top-0">
@@ -35,6 +43,8 @@ const Header = () => {
                                 <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded">
                                     Profile
                                 </button>
+                                <hr/>
+                                    <p className="p-3 break-words">{userInfo.email}</p>
                             </li>
                             <li>
                                 <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded">
@@ -43,7 +53,7 @@ const Header = () => {
                             </li>
                             <li>
                                 <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded"
-                                onClick={()=>{navigate("/")}}
+                                onClick={()=>{handaleLogOut()}}
                                 >
                                     Logout
                                 </button>

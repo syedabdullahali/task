@@ -1,30 +1,50 @@
 from rest_framework import serializers
 from .models import Order, OrderItem
 from app.products.models import Product
+from app.users.models import User 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "fullName",  "email"]
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'title', 'description', 'price', 'image','discount']
+        fields = ['id', 'title', 'description', 'price', 'image', 'discount']
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product_id = serializers.IntegerField(write_only=True)  
-    product = ProductSerializer(read_only=True)             
-    price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)  
+    product_id = serializers.IntegerField(write_only=True)
+    product = ProductSerializer(read_only=True)
+    price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = OrderItem
-        fields = ['product', 'product_id', 'quantity', 'price',]
+        fields = ['product', 'product_id', 'quantity', 'price']
 
-class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True)  
+class AdminOrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True, read_only=True)
+    user = UserSerializer(read_only=True) 
 
     class Meta:
         model = Order
-        fields = ['id', 'user', 'total_amount', 'status', 'stripe_payment_intent', 'created_at', 'items','destination','total_amount_with_discounte']
-        read_only_fields = ['user', 'total_amount', 'status', 'created_at', 'stripe_payment_intent','total_amount_with_discounte']
+        fields = [
+            'id', 'user', 'total_amount', 'status', 'payment_status',  
+            'created_at', 'items', 'destination', 'total_amount_with_discounte'
+        ]
 
-    def create(self, validated_data):  
+class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True)
+    user = UserSerializer(read_only=True) 
+
+    class Meta:
+        model = Order
+        fields = ['id', 'user', 'total_amount', 'status', 'stripe_payment_intent',
+                  'created_at', 'items', 'destination', 'total_amount_with_discounte']
+        read_only_fields = ['user', 'total_amount', 'status', 'created_at',
+                            'stripe_payment_intent', 'total_amount_with_discounte']
+
+    def create(self, validated_data):
         items_data = validated_data.pop('items', [])
         user = self.context['request'].user
         destination = validated_data.get('destination', '')
@@ -32,6 +52,7 @@ class OrderSerializer(serializers.ModelSerializer):
         order = Order.objects.create(
             user=user,
             status='pending',
+            payment_status='unpaid', 
             total_amount=0,
             total_amount_with_discounte=0,
             destination=destination

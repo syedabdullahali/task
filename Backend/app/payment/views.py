@@ -2,6 +2,7 @@
 import stripe
 from django.conf import settings
 from django.http import JsonResponse
+from app.orders.email import send_order_invoice_email
 from app.orders.models import Order
 from app.cart.models import CartItem
 from django.views.decorators.csrf import csrf_exempt
@@ -16,7 +17,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 @api_view(["POST"])
 def create_payment_intent(request):
     try:
-        order_id = request.data.get("order_id")  # <-- from body
+        order_id = request.data.get("order_id") 
         if not order_id:
             return Response(
                 {"success": False, "message": "Order ID is required"},
@@ -51,12 +52,12 @@ def create_payment_intent(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-@csrf_exempt   # 🚀 Important: must be here
+@csrf_exempt 
 def stripe_webhook(request):
     payload = request.body.decode("utf-8")
     sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
     endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
-
+    
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, endpoint_secret
@@ -66,15 +67,16 @@ def stripe_webhook(request):
     except stripe.error.SignatureVerificationError:
         return JsonResponse({"success": False, "message": "Invalid signature"}, status=400)
 
-    # ✅ Handle events
     if event["type"] == "payment_intent.succeeded":
         intent = event["data"]["object"]
         order_id = intent.get("metadata", {}).get("order_id")
-        # print(order_id)
         if order_id:
             try:
                 order = Order.objects.get(id=order_id)
                 order.payment_status = "paid"
+                send_order_invoice_email(order)
+        
+
                 order.stripe_payment_intent = intent["id"]
                 order.save()
                 CartItem.objects.filter(cart__user=order.user).delete()
@@ -102,7 +104,6 @@ def stripe_webhook(request):
             "message": f"Payment failed for {intent.get('id')}"
         }, status=400)
 
-    # Default
     return JsonResponse({
         "success": True,
         "message": f"Unhandled event type {event['type']}"

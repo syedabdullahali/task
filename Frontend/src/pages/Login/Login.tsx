@@ -3,10 +3,11 @@ import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { postPrivateData } from '../../api/apiPrivate';
 import { toast } from 'react-hot-toast';
-
+import { useNavigate } from 'react-router-dom';
 const Login = () => {
 
   const [isShowPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate()
 
 
   const { mutate: handleLogin } = useMutation({
@@ -25,6 +26,13 @@ const Login = () => {
         className:
           "bg-green-100 text-green-700 font-medium border border-green-300 rounded-lg",
       });
+
+      // Redirect after short delay
+      const redirectPath = data.user.role === "admin" ? "/admin" : "/product-shop/0";
+      setTimeout(() => {
+        navigate(redirectPath);
+      }, 1000);
+      
     },
     onError: (error: any) => {
       toast.error(error.message || "Something went wrong...", {

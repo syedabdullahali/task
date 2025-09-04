@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom'
 
 const OrderList = ({ order, getStatusClass }: { order: OrderDta, getStatusClass: (status: string) => void }) => {
 
-
+    const handleDownloadInvoice = () => {
+        // Example: Replace with your actual API endpoint
+        const invoiceUrl = `${process.env.REACT_APP_API_BASE_URL}/order/${order.id}/invoice/`;
+        window.open(invoiceUrl, '_blank'); // Opens invoice in new tab
+    }
 
     return (
         <div key={order.id} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-6">
@@ -28,55 +32,55 @@ const OrderList = ({ order, getStatusClass }: { order: OrderDta, getStatusClass:
             </div>
 
             {order.items.map((item: OrderItem, index) => (
-                <>
-                    <div key={item.product.id} className='flex justify-between'>
-
-                        <div key={index} className="flex items-center space-x-4 mb-4">
+                <div key={item.product.id} className='mb-4'>
+                    <div className='flex justify-between'>
+                        <div className="flex items-center space-x-4">
                             <img
                                 src={item.product.image.url}
                                 alt={item.product.title}
                                 className="w-16 h-16 rounded-lg object-cover bg-gray-100"
                             />
                             <div className="flex-1">
-
                                 <p className="text-base text-gray-800 font-medium">{item.product.title}</p>
                                 <p className="text-base text-gray-800 font-medium">${item.product.price}</p>
-
-                                <p>
-                                    {((item.product.discount / 100) * item.product.price) > 0 ?
-                                        <span className=" top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                            -${((item.product.discount / 100) * item.product.price).toFixed(2)} Off</span> : <></>}
-
-                                </p>
-
+                                {((item.product.discount / 100) * item.product.price) > 0 && (
+                                    <span className="top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                        -${((item.product.discount / 100) * item.product.price).toFixed(2)} Off
+                                    </span>
+                                )}
                             </div>
                         </div>
 
-                        <div>
-                            <Link to={`/product-detail/${ item.product.id }`} className="block w-fit ml-auto px-6 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">Details</Link>
-
-
+                        <div className="text-right">
+                            <Link to={`/product-detail/${item.product.id}`} className="block w-fit ml-auto px-6 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+                                Details
+                            </Link>
                             <p className="text-sm text-gray-500">${item.price} x{item.quantity}</p>
                             <p className="text-sm text-gray-500 font-bold">Total Item Price ${(Number(item.price) * item.quantity).toFixed(2)}</p>
-
                         </div>
-
                     </div>
-                    <div className="flex justify-between items-center pt-4 border-t border-dashed border-gray-300">
-
-
-
-                    </div>
-                </>
+                </div>
             ))}
-            Total: Amount {Number(order.total_amount_with_discounte) > 0 ?
-                <>
-                    <del className="text-gray-800 font-semibold">${order.total_amount} </del>
-                    <span className="ml-2 text-red-500"> ${(order.total_amount_with_discounte)}</span>
-                </> :
-                <span className="ml-2 text-gray-600"> ${(order.total_amount_with_discounte)}</span>
-            }
 
+            <div className="mt-4 flex justify-between items-center">
+                <div>
+                    Total Amount: {Number(order.total_amount_with_discounte) !== Number(order.total_amount) ? (
+                        <>
+                            <del className="text-gray-800 font-semibold">${order.total_amount}</del>
+                            <span className="ml-2 text-red-500">${order.total_amount_with_discounte}</span>
+                        </>
+                    ) : (
+                        <span className="ml-2 text-gray-600">${order.total_amount_with_discounte}</span>
+                    )}
+                </div>
+
+                <button
+                    onClick={handleDownloadInvoice}
+                    className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
+                >
+                    Download Invoice
+                </button>
+            </div>
 
         </div>
     )

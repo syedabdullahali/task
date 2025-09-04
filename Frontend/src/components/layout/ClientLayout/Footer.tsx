@@ -1,77 +1,38 @@
-import footerDiscount from "../../../assets/footerDiscount.png"
+import { useQuery } from "@tanstack/react-query";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import footerDiscount from "../../../assets/footerDiscount.png";
 import { Award, Gift, ShoppingBag, Truck } from "../../../icon/icon";
+import { getPublicData } from "../../../api/apiPublic";
+import { Link } from "react-router-dom";
+
+interface Product {
+  id: number;
+  title: string;
+}
+
+interface Category {
+  category_id: number;
+  category_title: string;
+  products: Product[];
+}
+
+interface FooterData {
+  success: boolean;
+  data: Category[];
+}
 
 const Footer = () => {
-  const footerLinks = [
-    {
-      title: "FRUIT & VEGETABLES",
-      links: [
-        "Cuts & Sprouts",
-        "Exotic Fruits & Veggies",
-        "Fresh Fruits",
-        "Fresh Vegetables",
-        "Herbs & Seasonings",
-        "Packaged Produce",
-        "Party Trays"
-      ]
-    },
-    {
-      title: "BREAKFAST & DAIRY",
-      links: [
-        "Butter and Margarine",
-        "Cheese",
-        "Eggs Substitutes",
-        "Honey",
-        "Marmalades",
-        "Milk & Flavoured Milk",
-        "Sour Cream and Dips",
-        "Yogurt"
-      ]
-    },
-    {
-      title: "MEAT & SEAFOOD",
-      links: [
-        "Beef",
-        "Breakfast Sausage",
-        "Chicken",
-        "Crab and Shellfish",
-        "Dinner Sausage",
-        "Farm Raised Fillets",
-        "Shrimp",
-        "Sliced Deli Meat",
-        "Wild Caught Fillets"
-      ]
-    },
-    {
-      title: "BEVERAGES",
-      links: [
-        "Coffee",
-        "Craft Beer",
-        "Drink Boxes & Pouches",
-        "Milk & Plant-Based Milk",
-        "Soda & Pop",
-        "Sparkling Water",
-        "Tea & Kombucha",
-        "Water",
-        "Wine"
-      ]
-    },
-    {
-      title: "BREADS & BAKERY",
-      links: [
-        "Butter and Margarine",
-        "Cheese",
-        "Eggs Substitutes",
-        "Honey",
-        "Marmalades",
-        "Milk & Flavoured Milk",
-        "Sour Cream and Dips",
-        "Yogurt"
-      ]
-    }
-  ];
+  const { data, isLoading, isError } = useQuery<FooterData>({
+    queryKey: ["footer_data"],
+    queryFn: () => getPublicData(`/products/footer_group`),
+  });
 
-
+  const footerLinks =
+    data?.data.map((category) => ({
+      linkParent: category,
+      links: category.products.map((product) => product),
+    })) || [];
 
   return (
     <footer className="bg-gray-50 text-gray-800 font-sans leading-relaxed">
@@ -91,17 +52,14 @@ const Footer = () => {
                 placeholder="Your email address"
                 className="py-3 px-4 rounded-lg flex-1 text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button
-                className="py-3 px-6 rounded-lg bg-blue-700 text-white font-medium hover:bg-blue-800 transition-colors duration-200"
-              >
+              <button className="py-3 px-6 rounded-lg bg-blue-700 text-white font-medium hover:bg-blue-800 transition-colors duration-200">
                 Subscribe
               </button>
             </div>
           </div>
           <figure>
-            <img src={footerDiscount} />
+            <img src={footerDiscount} alt="Footer Discount" />
           </figure>
-    
         </div>
       </div>
 
@@ -128,20 +86,34 @@ const Footer = () => {
 
       <div className="py-12 px-6 lg:px-24">
         <div className="container mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-          {footerLinks.map((section, index) => (
-            <div key={index} className="flex flex-col">
-              <h4 className="text-sm font-bold uppercase mb-4 text-[#1e3a8a]">{section.title}</h4>
-              <ul className="space-y-2">
-                {section.links.map((link, linkIndex) => (
-                  <li key={linkIndex}>
-                    <a href="#" className="text-sm text-gray-600 hover:text-[#1e3a8a] transition-colors duration-200">
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="flex flex-col">
+                  <Skeleton width={100} height={20} className="mb-4" />
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <Skeleton key={i} width={80} height={14} className="mb-2" />
+                  ))}
+                </div>
+              ))
+            : footerLinks.map((section, index) => (
+                <div key={index} className="flex flex-col">
+                  <h4 className="text-sm font-bold uppercase mb-4 text-[#1e3a8a]">
+                    <Link to={`/product-shop/${section.linkParent.category_id}`}>{section.linkParent.category_title}</Link>
+                  </h4>
+                  <ul className="space-y-2">
+                    {section.links.map((link, linkIndex) => (
+                      <li key={linkIndex}>
+                        <Link
+                          to={`/product-detail/${link.id}`}
+                          className="text-sm text-gray-600 hover:text-[#1e3a8a] transition-colors duration-200"
+                        >
+                          {link.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
         </div>
       </div>
     </footer>

@@ -5,6 +5,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import json
 User = get_user_model()
 from django.contrib.auth.hashers import make_password
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.paginator import Paginator
+from django.db.models import Q
+from .serializers import UserSerializer
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+from rest_framework.pagination import PageNumberPagination
 
 
 @csrf_exempt
@@ -51,8 +60,6 @@ def login(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode("utf-8"))
 
-        # username = request.POST.get('username')
-        # password = request.POST.get('password')
 
         email = data.get("email")
         password = data.get("password")
@@ -88,3 +95,96 @@ from rest_framework_simplejwt.views import TokenRefreshView
 @csrf_exempt
 def token_refresh(request):
     return TokenRefreshView.as_view()(request)
+
+# View
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def user_list(request):
+    search = request.GET.get('search', '').strip()
+    page = int(request.GET.get('page', 1))
+    page_size = int(request.GET.get('page_size', 5))
+
+    users = User.objects.all()
+    if search:
+     users = users.filter(
+        Q(email__icontains=search) | Q(fullName__icontains=search)
+     )
+
+    total = users.count()
+    start = (page - 1) * page_size
+    end = start + page_size
+    users_paginated = users[start:end]
+
+    serializer = UserSerializer(users_paginated, many=True)
+
+    return Response({
+        "success": True,
+        "message": "Users fetched successfully",
+        "data": serializer.data,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": (total + page_size - 1) // page_size
+    })
+# Create a new user
+@api_view(['POST'])
+def user_create(request):
+    try:
+        data = request.data.copy() 
+        role = data.get('role', '').lower()
+        print(role)
+
+        serializer = UserSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        if role == 'admin':
+            user.is_staff = True
+            user.is_superuser = True
+            user.username = data.get('email')
+            user.save()
+
+        return Response({
+            "success": True,
+            "message": "User created successfully",
+            "data": serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({
+            "success": False,
+            "message": str(e),
+            "data": None
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'PATCH'])
+def user_detail(request, pk):
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        return Response({"success": False, "message": "User not found", "data": None}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = UserSerializer(user)
+        return Response({"success": True, "message": "User retrieved successfully", "data": serializer.data})
+
+    elif request.method in ['PUT', 'PATCH']:
+        partial = request.method == 'PATCH'
+        serializer = UserSerializer(user, data=request.data, partial=partial)
+        try:
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({"success": True, "message": "User updated successfully", "data": serializer.data})
+        except Exception as e:
+            return Response({"success": False, "message": str(e), "data": None}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def user_delete(request, pk):
+    try:
+        user = User.objects.get(pk=pk)
+        user.delete()
+        return Response({"success": True, "message": "User deleted successfully", "data": None})
+    except User.DoesNotExist:
+        return Response({"success": False, "message": "User not found", "data": None}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"success": False, "message": str(e), "data": None}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

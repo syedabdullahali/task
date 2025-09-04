@@ -6,7 +6,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import signUp from "../../assets/paymentBanner.png"
 import Skeleton from "react-loading-skeleton";
 
@@ -47,7 +47,6 @@ const CheckoutForm: React.FC<{ clientSecret: string }> = ({ clientSecret }) => {
     <form onSubmit={handleSubmit}>
       <PaymentElement />
       <div className=" py-2 ">
-        {/* Checkout Button */}
         <button
           type="submit"
           disabled={!stripe || !elements}
@@ -56,16 +55,17 @@ const CheckoutForm: React.FC<{ clientSecret: string }> = ({ clientSecret }) => {
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-800 hover:opacity-90" }`}
         >
-          💳 Checkout Payment
+           Checkout Payment
         </button>
 
-        <button
+        <Link
+          to={'/order_tracking'}
           type="button"
           className="px-6 py-3 rounded border border-gray-300 text-gray-700 font-semibold  w-full 
       hover:bg-gray-100 hover:shadow-lg transition-all duration-300"
         >
-          ⏭️ Skip & Pay Later
-        </button>
+          Skip & Pay Later
+        </Link>
       </div>
       {errorMessage && <div>{errorMessage}</div>}
     </form>

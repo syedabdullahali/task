@@ -9,6 +9,14 @@ from django.db.models import Prefetch
 from django.db.models import Count, Sum,Prefetch
 from django.http import JsonResponse
 import math
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Product
+from .serializers import ProductSerializer
+from django.db.models import Q
+from django.core.paginator import Paginator
 
 
 def product_details(_, product_id):
@@ -109,8 +117,8 @@ def product_list_with_category(request):
     categoryId =    request.GET.get('categoryId')
     search_query =    request.GET.get('search', '')
 
-    page =    request.GET.get('page',1)
-    page_limit =    request.GET.get('page_limit',20)
+    page = int(request.GET.get("page", 1))
+    page_limit = int(request.GET.get("page_limit", 20))
   
     start = (page - 1) * page_limit
     end = start + page_limit
@@ -161,6 +169,7 @@ def product_list_with_category(request):
    
 
 def product_grouped(request):
+    
     try:
         categories = (
             Category.objects
@@ -233,10 +242,51 @@ def product_grouped(request):
             "success": False,
             "error": str(e)
         }, status=500)
-    
+def product_grouped_Footer(request):
+    try:
+        categories = (
+            Category.objects
+            .annotate(total_products=Count("product"))
+            .order_by("-total_products")
+            .prefetch_related(
+                Prefetch(
+                    "product_set",
+                    queryset=Product.objects.filter(show_on_layout=True).only("id", "title"),
+                    to_attr="prefetched_products"  # store prefetched results in this attribute
+                )
+            )
+        )
+
+        data_items = []
+
+        for category in categories:
+            products = [
+                {
+                    "id": p.id,
+                    "title": p.title
+                }
+                for p in getattr(category, "prefetched_products", [])
+            ]
+
+            data_items.append({
+                "category_id": category.id,
+                "category_title": category.title,
+                "products": products
+            })
+
+        return JsonResponse({
+            "success": True,
+            "data": data_items,
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            "success": False,
+            "error": str(e)
+        }, status=500)
 # Cons of this approach
 
-#👉 Performance issue appears if:
+# Performance issue appears if:
 # You have many categories, and
 # Each has lots of products.  
 
@@ -245,47 +295,53 @@ def product_grouped(request):
 # Due to urgency of completing this task i am going to use this way
 
 
+@api_view(['GET', 'POST'])
+@permission_classes([IsAdminUser])
+def product_list_create(request):
+    if request.method == 'GET':
+        search = request.GET.get('search', '').strip()
+        page = int(request.GET.get('page', 1))
+        page_size = int(request.GET.get('page_size', 10))
 
-def product_create(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)  
-            title = data.get('title')
-            price = data.get('price')
-            category = data.get('category')
-            product = Product.objects.create(title=title, price=price, category=category)
-            return JsonResponse({
-                "success": True,
-                "message": "Product created successfully",
-                "product_id": product.id
-            })
-        except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=400)
+        products = Product.objects.all()
+        if search:
+            products = products.filter(Q(title__icontains=search) | Q(description__icontains=search))
 
-def product_update(request, pk):
-    if request.method == "PUT": 
-        try:
-            product = get_object_or_404(Product, pk=pk)
-            data = json.loads(request.body)
-            product.title = data.get('title', product.title)
-            product.price = data.get('price', product.price)
-            product.category = data.get('category', product.category)
-            product.save()
-            return JsonResponse({
-                "success": True,
-                "message": "Product updated successfully"
-            })
-        except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=400)
+        paginator = Paginator(products, page_size)
+        page_obj = paginator.get_page(page)
+        serializer = ProductSerializer(page_obj.object_list, many=True)
 
-def product_delete(request, pk):
-    if request.method == "DELETE":
-        try:
-            product = get_object_or_404(Product, pk=pk)
-            product.delete()
-            return JsonResponse({
-                "success": True,
-                "message": "Product deleted successfully"
-            })
-        except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=400)
+        return Response({
+            "success": True,
+            "data": serializer.data,
+            "pagination": {
+                "current_page": page_obj.number,
+                "total_pages": paginator.num_pages,
+                "total_items": paginator.count,
+                "page_size": page_size,
+                "has_next": page_obj.has_next(),
+                "has_previous": page_obj.has_previous(),
+            }
+        })
+
+    elif request.method == 'POST':
+        serializer = ProductSerializer(data=request.data)
+        print(request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"success": True, "data": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({"success": False, "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+                        )
+
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def product_delete(request, product_id):
+    try:
+        product = get_object_or_404(Product, pk=product_id)
+        product.delete()
+        return JsonResponse({
+            "success": True,
+            "message": "Product deleted successfully"
+        })
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=400)
