@@ -16,6 +16,9 @@ django-cors-headers = "*"
 pillow = "*"
 django = "*"
 dj-database-url = "*"
+stripe = "*"
+channels = "*"
+reportlab = "*"
 
 [dev-packages]
 
