@@ -61,7 +61,7 @@ const CheckoutForm: React.FC<{ clientSecret: string }> = ({ clientSecret }) => {
         <Link
           to={'/order_tracking'}
           type="button"
-          className="px-6 py-3 rounded border border-gray-300 text-gray-700 font-semibold  w-full 
+          className="px-6 py-3 rounded border border-gray-300 text-gray-700 font-semibold block w-full 
       hover:bg-gray-100 hover:shadow-lg transition-all duration-300"
         >
           Skip & Pay Later

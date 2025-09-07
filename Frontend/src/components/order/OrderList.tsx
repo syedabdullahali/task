@@ -36,7 +36,7 @@ const OrderList = ({ order, getStatusClass }: { order: OrderDta, getStatusClass:
                     <div className='flex justify-between'>
                         <div className="flex items-center space-x-4">
                             <img
-                                src={item.product.image.url}
+                                src={item.product?.image?.url}
                                 alt={item.product.title}
                                 className="w-16 h-16 rounded-lg object-cover bg-gray-100"
                             />

@@ -31,7 +31,7 @@ const Login = () => {
       const redirectPath = data.user.role === "admin" ? "/admin" : "/product-shop/0";
       setTimeout(() => {
         navigate(redirectPath);
-      }, 1000);
+      }, 2000);
       
     },
     onError: (error: any) => {
