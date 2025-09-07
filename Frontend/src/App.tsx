@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, HashRouter } from 'react-router-dom';
 import { Suspense, lazy } from "react";
 import { AuthProvider } from './context/AuthContext';
 import { PrivateRoute, AdminRoute } from './components/PrivateRoute';
@@ -32,7 +32,7 @@ const UserManagement = lazy(() => import('./pages/management/UserManagement'));
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <HashRouter>
         <Suspense fallback={<Loader/>}>
           <Routes>
 
@@ -69,7 +69,7 @@ function App() {
                    <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-      </BrowserRouter>
+      </HashRouter>
     </AuthProvider>
   );
 }

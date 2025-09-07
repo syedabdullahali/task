@@ -23,9 +23,9 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+    const storedUser = localStorage.getItem("userInfo");
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("userInfo");
     if (storedUser) {
       try {
         const parsedUser: User = JSON.parse(storedUser);
@@ -34,8 +34,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.error("Failed to parse user info from localStorage:", error);
       }
     }
-  }, []);
-
+  }, [storedUser]);
+console.log(user)
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       {children}

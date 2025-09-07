@@ -66,6 +66,18 @@ This will start both the **frontend** and **backend** services.
 
 ---
 
+## Run Real-Time Server Manually
+1. **Start Redis (message broker for real-time communication)**
+```sh
+redis-server
+
+python -m daphne -p 9000 config.asgi:application
+```
+---
+## Start Stripe Webhook Listener (for payment events)
+```
+stripe listen --forward-to http://127.0.0.1:8000/api/payment/webhook
+```
 ## ✅ Notes
 
 * Ensure `.env` files are configured properly for secrets, database URLs, and Stripe keys.

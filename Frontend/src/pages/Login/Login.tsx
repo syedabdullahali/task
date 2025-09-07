@@ -29,10 +29,7 @@ const Login = () => {
 
       // Redirect after short delay
       const redirectPath = data.user.role === "admin" ? "/admin" : "/product-shop/0";
-      setTimeout(() => {
-        navigate(redirectPath);
-      }, 2000);
-      
+        navigate(redirectPath);      
     },
     onError: (error: any) => {
       toast.error(error.message || "Something went wrong...", {

@@ -10,5 +10,6 @@ export const PrivateRoute = () => {
 // For admin only
 export const AdminRoute = () => {
   const { user } = useAuth();
+  console.log(user)
   return user && user.role === "admin" ? <Outlet /> : <Navigate to="/login" />;
 };
